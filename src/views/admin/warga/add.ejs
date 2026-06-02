@@ -1,0 +1,17 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom border-light">
+    <h1 class="h2 fw-bold text-dark">Tambah Data Warga</h1>
+    <a href="/admin/warga" class="btn btn-outline-secondary btn-sm rounded-pill px-4 shadow-sm fw-medium"><i class="bi bi-arrow-left me-1"></i> Kembali</a>
+</div>
+
+
+
+<form action="/admin/warga/add" method="POST" class="mb-5" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <%- include('_form', { warga: (typeof warga !== 'undefined' ? warga : {}), dusun: dusun }) %>
+    <div class="card shadow-sm border-0 rounded-4 mt-4 bg-light">
+        <div class="card-body p-4 d-flex justify-content-end">
+            <a href="/admin/warga" class="btn btn-white border shadow-sm rounded-pill px-4 fw-medium text-secondary me-3">Batal</a>
+            <button type="submit" class="btn btn-primary shadow-sm rounded-pill px-5 fw-bold"><i class="bi bi-save me-2"></i> Simpan Data Warga</button>
+        </div>
+    </div>
+</form>

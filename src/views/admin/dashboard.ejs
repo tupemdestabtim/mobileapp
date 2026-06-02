@@ -1,0 +1,343 @@
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+    }
+    .stat-card .card-body {
+        padding: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    .stat-icon-bg {
+        position: absolute;
+        right: -10px;
+        bottom: -20px;
+        font-size: 8rem;
+        opacity: 0.15;
+        z-index: 0;
+        transform: rotate(-15deg);
+    }
+    .bg-gradient-primary { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+    .bg-gradient-success { background: linear-gradient(135deg, #10b981 0%, #047857 100%); }
+    .bg-gradient-info { background: linear-gradient(135deg, #06b6d4 0%, #0369a1 100%); }
+    .bg-gradient-warning { background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); }
+</style>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom border-light">
+    <h1 class="h2 fw-bold text-dark">Dashboard Overview</h1>
+    <button class="btn btn-primary rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#addWidgetModal">
+        <i class="bi bi-plus-circle me-2"></i> Tambah Grafik
+    </button>
+</div>
+
+
+
+
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-gradient-primary shadow-sm stat-card h-100">
+            <i class="bi bi-geo-alt-fill stat-icon-bg text-white"></i>
+            <div class="card-body">
+                <h6 class="card-title text-uppercase fw-semibold mb-2" style="letter-spacing: 1px; opacity: 0.9;">Total Dusun</h6>
+                <div class="d-flex align-items-baseline mb-3">
+                    <h2 class="card-text display-5 fw-bold mb-0 me-2"><%= totalDusun %></h2>
+                    <span class="small opacity-75">Wilayah</span>
+                </div>
+                <a href="/admin/dusun" class="btn btn-light btn-sm text-primary fw-medium rounded-pill px-3 shadow-sm" style="position: relative; z-index: 2;">Manage Dusun</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-gradient-success shadow-sm stat-card h-100">
+            <i class="bi bi-people-fill stat-icon-bg text-white"></i>
+            <div class="card-body">
+                <h6 class="card-title text-uppercase fw-semibold mb-2" style="letter-spacing: 1px; opacity: 0.9;">Total Petugas</h6>
+                <div class="d-flex align-items-baseline mb-3">
+                    <h2 class="card-text display-5 fw-bold mb-0 me-2"><%= totalPetugas %></h2>
+                    <span class="small opacity-75">Active</span>
+                </div>
+                <a href="/admin/users" class="btn btn-light btn-sm text-success fw-medium rounded-pill px-3 shadow-sm" style="position: relative; z-index: 2;">Manage Petugas</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-gradient-info shadow-sm stat-card h-100">
+            <i class="bi bi-person-vcard-fill stat-icon-bg text-white"></i>
+            <div class="card-body">
+                <h6 class="card-title text-uppercase fw-semibold mb-2" style="letter-spacing: 1px; opacity: 0.9;">Total Warga</h6>
+                <div class="d-flex align-items-baseline mb-3">
+                    <h2 class="card-text display-5 fw-bold mb-0 me-2"><%= totalWarga %></h2>
+                    <span class="small opacity-75">Terdata</span>
+                </div>
+                <a href="/admin/warga" class="btn btn-light btn-sm text-info fw-medium rounded-pill px-3 shadow-sm" style="position: relative; z-index: 2;">Manage Warga</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-gradient-warning shadow-sm stat-card h-100">
+            <i class="bi bi-house-door-fill stat-icon-bg text-white"></i>
+            <div class="card-body">
+                <h6 class="card-title text-uppercase fw-semibold mb-2" style="letter-spacing: 1px; opacity: 0.9;">Total KK</h6>
+                <div class="d-flex align-items-baseline mb-3">
+                    <h2 class="card-text display-5 fw-bold mb-0 me-2"><%= totalKK %></h2>
+                    <span class="small opacity-75">Keluarga</span>
+                </div>
+                <a href="/admin/keluarga" class="btn btn-light btn-sm text-warning fw-medium rounded-pill px-3 shadow-sm" style="position: relative; z-index: 2;">Lihat Data</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dynamic Widgets Grid -->
+<div class="row g-4 mb-5" id="widgetsContainer">
+    <!-- Widgets will be loaded here via AJAX -->
+</div>
+
+<!-- Add Widget Modal -->
+<div class="modal fade" id="addWidgetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 1.5rem;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Buat Grafik Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addWidgetForm" class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Judul Grafik</label>
+                    <input type="text" name="title" class="form-control rounded-pill border-light bg-light" placeholder="Misal: Sebaran Agama" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Pilih Data (Field)</label>
+                    <select name="field_name" class="form-select rounded-pill border-light bg-light" required>
+                        <% schema.sections.forEach(section => { %>
+                            <optgroup label="<%= section.title %>">
+                                <% section.fields.forEach(field => { %>
+                                    <% if (field.type === 'select' || field.type === 'radio' || field.type === 'checkbox_group' || field.name === 'jenis_kelamin') { %>
+                                        <option value="<%= field.name %>"><%= field.label %></option>
+                                    <% } %>
+                                <% }) %>
+                            </optgroup>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Tipe Grafik</label>
+                    <div class="d-flex gap-3">
+                        <label class="flex-fill">
+                            <input type="radio" name="chart_type" value="pie" class="btn-check" checked>
+                            <div class="btn btn-outline-primary w-100 rounded-pill"><i class="bi bi-pie-chart me-2"></i>Pie</div>
+                        </label>
+                        <label class="flex-fill">
+                            <input type="radio" name="chart_type" value="bar" class="btn-check">
+                            <div class="btn btn-outline-primary w-100 rounded-pill"><i class="bi bi-bar-chart me-2"></i>Bar</div>
+                        </label>
+                        <label class="flex-fill">
+                            <input type="radio" name="chart_type" value="line" class="btn-check">
+                            <div class="btn btn-outline-primary w-100 rounded-pill"><i class="bi bi-graph-up me-2"></i>Line</div>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow">
+                    <i class="bi bi-check-circle me-2"></i>Simpan Grafik
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const csrfToken = '<%- csrfToken %>';
+    const chartColors = [
+        'rgba(59, 130, 246, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)',
+        'rgba(239, 68, 68, 0.7)', 'rgba(139, 92, 246, 0.7)', 'rgba(236, 72, 153, 0.7)',
+        'rgba(6, 182, 212, 0.7)', 'rgba(75, 85, 99, 0.7)'
+    ];
+
+    async function loadWidgets() {
+        try {
+            const res = await fetch('/admin/api/widgets', {
+                credentials: 'same-origin'
+            });
+            
+            const text = await res.text();
+            if (!text) return; // Handle empty response
+            
+            const widgets = JSON.parse(text);
+            const container = document.getElementById('widgetsContainer');
+        container.innerHTML = '';
+
+        for (const widget of widgets) {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4';
+            
+            // Security: Use textContent for title to prevent XSS
+            col.innerHTML = `
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 1.25rem;">
+                    <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3 px-3 pb-0">
+                        <h6 class="fw-bold mb-0 text-muted widget-title"></h6>
+                        <button data-widget-id="${widget.id}" class="btn btn-link text-danger p-0 delete-widget-btn"><i class="bi bi-trash"></i></button>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chart-${widget.id}"></canvas>
+                    </div>
+                </div>
+            `;
+            col.querySelector('.widget-title').textContent = widget.title;
+            
+            container.appendChild(col);
+            renderChart(widget);
+        }
+    } catch (error) {
+        console.error('Load widgets error:', error);
+    }
+}
+
+    // Use event delegation for delete buttons
+    document.getElementById('widgetsContainer').addEventListener('click', (e) => {
+        const btn = e.target.closest('.delete-widget-btn');
+        if (btn) {
+            const id = btn.getAttribute('data-widget-id');
+            deleteWidget(id);
+        }
+    });
+
+    async function renderChart(widget) {
+        const res = await fetch(`/admin/api/aggregate/${widget.field_name}`);
+        const data = await res.json();
+        const ctx = document.getElementById(`chart-${widget.id}`).getContext('2d');
+
+        new Chart(ctx, {
+            type: widget.chart_type,
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Jumlah',
+                    data: data.values,
+                    backgroundColor: chartColors,
+                    borderColor: 'white',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: widget.chart_type === 'line'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        display: widget.chart_type !== 'bar',
+                        labels: { boxWidth: 10, font: { size: 10 } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const val = context.raw;
+                                const pct = data.percentages[context.dataIndex];
+                                return ` ${context.label}: ${val} (${pct}%)`;
+                            }
+                        }
+                    }
+                },
+                scales: widget.chart_type === 'bar' || widget.chart_type === 'line' ? {
+                    y: { beginAtZero: true, grid: { display: false } },
+                    x: { grid: { display: false } }
+                } : {}
+            }
+        });
+    }
+
+    async function deleteWidget(id) {
+        Swal.fire({
+            title: 'Hapus Grafik?',
+            text: "Grafik ini akan dihapus dari dashboard Anda.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                popup: 'rounded-4 shadow-lg border-0',
+                confirmButton: 'btn btn-danger rounded-pill px-4',
+                cancelButton: 'btn btn-light rounded-pill px-4 ms-2'
+            },
+            buttonsStyling: false
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch(`/admin/api/widgets/delete/${id}`, { 
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'x-csrf-token': csrfToken
+                        },
+                        body: JSON.stringify({ _csrf: csrfToken }),
+                        credentials: 'same-origin'
+                    });
+                    
+                    if (res.ok) {
+                        loadWidgets();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Terhapus!',
+                            text: 'Grafik berhasil dihapus.',
+                            timer: 1500,
+                            showConfirmButton: false,
+                            customClass: { popup: 'rounded-4 border-0 shadow' }
+                        });
+                    } else {
+                        Swal.fire('Gagal!', 'Tidak dapat menghapus grafik.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    Swal.fire('Error!', 'Terjadi kesalahan sistem.', 'error');
+                }
+            }
+        });
+    }
+
+    document.getElementById('addWidgetForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const body = Object.fromEntries(formData.entries());
+        body._csrf = csrfToken;
+
+        try {
+            const res = await fetch('/admin/api/widgets', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-csrf-token': csrfToken
+                },
+                body: JSON.stringify(body),
+                credentials: 'same-origin'
+            });
+
+            if (res.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('addWidgetModal')).hide();
+                e.target.reset();
+                loadWidgets();
+            } else {
+                const err = await res.json();
+                alert('Gagal menyimpan grafik: ' + (err.message || 'Error tidak diketahui'));
+            }
+        } catch (error) {
+            console.error('Submit error:', error);
+            alert('Terjadi kesalahan saat menyimpan grafik.');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadWidgets);
+</script>
+

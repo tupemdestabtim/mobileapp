@@ -1,0 +1,129 @@
+<nav aria-label="breadcrumb" class="no-print">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/admin/reports">Laporan</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Kesejahteraan</li>
+  </ol>
+</nav>
+
+<div class="d-none d-print-block text-center mb-4">
+    <h4 class="mb-0 fw-bold">PEMERINTAH KABUPATEN GORONTALO</h4>
+    <h4 class="mb-0 fw-bold">KECAMATAN BONGOMEME</h4>
+    <h4 class="mb-0 fw-bold">DESA MOLANIHU</h4>
+    <hr style="border-top: 3px solid black; opacity: 1; margin-bottom: 2px; margin-top: 15px;">
+    <hr style="border-top: 1px solid black; opacity: 1; margin-top: 0; margin-bottom: 20px;">
+</div>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+    <div>
+        <h1 class="h2 fw-bold mb-0">Laporan Kesejahteraan & Hunian</h1>
+        <p class="text-secondary mb-0">Indikator kemiskinan dan kelayakan fasilitas rumah tangga.</p>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0 no-print">
+        <button type="button" class="btn btn-primary shadow-sm" onclick="window.print()">
+            <i class="bi bi-printer-fill me-2"></i> Cetak Laporan
+        </button>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Kelayakan Hunian -->
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header bg-white border-0 py-3 border-bottom">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-house-door me-2 text-primary"></i>Kelayakan Fisik Bangunan</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="row g-0">
+                    <% 
+                    const buildingStats = [
+                        { label: 'Material Lantai', data: stats.jenis_lantai, field: 'jenis_lantai' },
+                        { label: 'Material Dinding', data: stats.jenis_dinding, field: 'jenis_dinding' },
+                        { label: 'Material Atap', data: stats.jenis_atap, field: 'jenis_atap' }
+                    ];
+                    %>
+                    <% buildingStats.forEach((s, index) => { %>
+                        <div class="col-md-4 <%= index < 2 ? 'border-end' : '' %>">
+                            <div class="p-4">
+                                <h6 class="text-secondary fw-bold text-uppercase small mb-4"><%= s.label %></h6>
+                                <% s.data.forEach(item => { %>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-capitalize small fw-medium"><%= item[s.field] %></span>
+                                        <span class="fw-bold"><%= item.get('count') %></span>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Energi & Aset -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0 fw-bold">Akses Energi & Memasak</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <label class="small text-secondary fw-bold text-uppercase mb-3">Sumber Penerangan</label>
+                    <% stats.sumber_penerangan.forEach(item => { %>
+                        <div class="d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded-3">
+                            <span class="small"><%= item.sumber_penerangan %></span>
+                            <span class="badge bg-white text-dark border fw-bold"><%= item.get('count') %></span>
+                        </div>
+                    <% }) %>
+                </div>
+                <div>
+                    <label class="small text-secondary fw-bold text-uppercase mb-3">Bahan Bakar Utama</label>
+                    <div class="row g-2">
+                        <% stats.bahan_bakar_memasak.forEach(item => { %>
+                            <div class="col-6">
+                                <div class="p-2 border rounded text-center">
+                                    <div class="fw-bold mb-0"><%= item.get('count') %></div>
+                                    <div class="text-secondary text-uppercase" style="font-size: 0.6rem;"><%= item.bahan_bakar_memasak %></div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0 fw-bold">Kepemilikan Aset Strategis</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <label class="small text-secondary fw-bold text-uppercase mb-3">Aset Kendaraan</label>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <tbody>
+                                <% Object.keys(kendaraanCounts).forEach(k => { %>
+                                    <tr>
+                                        <td><i class="bi bi-bicycle me-2 text-primary"></i> <span class="small"><%= k %></span></td>
+                                        <td class="text-end fw-bold"><%= kendaraanCounts[k] %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div>
+                    <label class="small text-secondary fw-bold text-uppercase mb-3">Aset Elektronik</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <% Object.keys(elektronikCounts).forEach(e => { %>
+                            <span class="badge bg-dark bg-opacity-10 text-dark border border-dark border-opacity-10 p-2 fw-medium">
+                                <%= e %>: <span class="fw-bold"><%= elektronikCounts[e] %></span>
+                            </span>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

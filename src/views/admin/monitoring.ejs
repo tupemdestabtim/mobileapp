@@ -1,0 +1,279 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom border-light">
+    <h1 class="h2 fw-bold text-dark">Security Monitoring & Analytics</h1>
+    <a href="/admin/monitoring/export" class="btn btn-success rounded-pill shadow-sm px-4 fw-medium">
+        <i class="bi bi-file-earmark-excel me-1"></i> Export Laporan Keamanan
+    </a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card text-white bg-primary shadow-sm h-100 border-0 rounded-4">
+            <div class="card-body p-4">
+                <h6 class="card-title text-uppercase fw-semibold mb-2" style="letter-spacing: 1px; opacity: 0.9;">Total Pendataan Warga</h6>
+                <div class="d-flex align-items-center mb-0">
+                    <i class="bi bi-person-vcard fs-1 opacity-50 me-3"></i>
+                    <h2 class="card-text display-5 fw-bold mb-0"><%= stats.totalWarga %></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card text-white bg-danger shadow-sm h-100 border-0 rounded-4">
+            <div class="card-body p-4">
+                <h6 class="card-title text-uppercase fw-semibold mb-2" style="letter-spacing: 1px; opacity: 0.9;">Ancaman (24 Jam Terakhir)</h6>
+                <div class="d-flex align-items-center mb-0">
+                    <i class="bi bi-shield-x fs-1 opacity-50 me-3"></i>
+                    <h2 class="card-text display-5 fw-bold mb-0"><%= stats.threatsCount24h %></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card text-white bg-success shadow-sm h-100 border-0 rounded-4">
+            <div class="card-body p-4">
+                <h6 class="card-title text-uppercase fw-semibold mb-2" style="letter-spacing: 1px; opacity: 0.9;">Device Aktif (7 Hari)</h6>
+                <div class="d-flex align-items-center mb-0">
+                    <i class="bi bi-phone fs-1 opacity-50 me-3"></i>
+                    <h2 class="card-text display-5 fw-bold mb-0"><%= stats.activeDevices7d %></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Security Threats Table -->
+    <div class="col-lg-12">
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold text-dark mb-0"><i class="bi bi-shield-exclamation text-danger me-2"></i> Peringatan Keamanan (Realtime)</h5>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="clearLogs('security')" title="Bersihkan Log Keamanan">
+                    <i class="bi bi-trash3 me-1"></i> Bersihkan Log
+                </button>
+            </div>
+            <div class="card-body px-0 pt-0">
+                <div class="table-responsive" style="max-height: 400px;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-secondary sticky-top">
+                            <tr>
+                                <th class="border-0 ps-4 fw-medium small">WAKTU</th>
+                                <th class="border-0 fw-medium small">EVENT / ANCAMAN</th>
+                                <th class="border-0 fw-medium small">IDENTITAS DEVICE (IP)</th>
+                                <th class="border-0 fw-medium small text-end">RESIKO</th>
+                                <th class="border-0 pe-4 fw-medium small text-center">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-top-0">
+                            <% securityThreats.forEach(log => { %>
+                                <tr class="<%= (log.risk === 'HIGH' && !log.is_blocked) ? 'table-danger' : '' %>">
+                                    <td class="ps-4 py-3 text-secondary small"><%= new Date(log.created_at).toLocaleString() %></td>
+                                    <td class="py-3">
+                                        <div class="fw-bold text-dark"><%= log.event %></div>
+                                        <% if(log.event === 'ROOT_DETECTED') { %>
+                                            <span class="small text-danger">Terdeteksi Root/Magisk/SU</span>
+                                        <% } else if(log.event === 'FAKE_GPS_DETECTED') { %>
+                                            <span class="small text-warning">Terdeteksi Pemalsuan Lokasi (Mock Location)</span>
+                                        <% } else if(log.event === 'SIGNATURE_MISMATCH') { %>
+                                            <span class="small text-danger">Integritas APK rusak/dimodifikasi</span>
+                                        <% } else if(log.event === 'REVERSE_ENGINEERING') { %>
+                                            <span class="small text-danger">Terdeteksi Frida/Xposed/Ptrace</span>
+                                        <% } %>
+                                    </td>
+                                    <td class="py-3 text-secondary small font-monospace"><%= log.device %></td>
+                                    <td class="pe-4 py-3 text-end">
+                                        <span class="badge <%= log.risk === 'HIGH' ? 'bg-danger' : 'bg-warning text-dark' %> rounded-pill"><%= log.risk %></span>
+                                    </td>
+                                    <td class="pe-4 py-3 text-center">
+                                        <% if (log.risk === 'HIGH') { %>
+                                            <% if (log.is_blocked) { %>
+                                                <button class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="handleAction('recover', '<%= log.id %>')" title="Pulihkan akses untuk user dan device ini">
+                                                    <i class="bi bi-unlock me-1"></i> Pulihkan
+                                                </button>
+                                            <% } else { %>
+                                                <button class="btn btn-sm btn-danger rounded-pill px-3" onclick="handleAction('terminate', '<%= log.id %>')" title="Blokir akses untuk user dan device ini">
+                                                    <i class="bi bi-shield-slash me-1"></i> Blokir
+                                                </button>
+                                            <% } %>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                            <% if(securityThreats.length === 0) { %>
+                                <tr><td colspan="5" class="text-center py-4 text-muted">Belum ada peringatan keamanan.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Login & Online Monitoring -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold text-dark mb-0"><i class="bi bi-box-arrow-in-right text-primary me-2"></i> Riwayat Login Device</h5>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="clearLogs('login')" title="Bersihkan Riwayat Login">
+                    <i class="bi bi-trash3 me-1"></i> Bersihkan Log
+                </button>
+            </div>
+            <div class="card-body px-0 pt-0">
+                <div class="table-responsive" style="max-height: 400px;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-secondary sticky-top">
+                            <tr>
+                                <th class="border-0 ps-4 fw-medium small">WAKTU</th>
+                                <th class="border-0 fw-medium small">PENGGUNA</th>
+                                <th class="border-0 fw-medium small">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-top-0">
+                            <% recentLogins.forEach(log => { %>
+                                <tr>
+                                    <td class="ps-4 py-3 text-secondary small"><%= new Date(log.login_at).toLocaleString() %></td>
+                                    <td class="py-3">
+                                        <div class="fw-bold text-dark"><%= log.User ? log.User.nama_lengkap : 'Gagal / Tidak Dikenal' %></div>
+                                        <div class="small text-muted font-monospace"><%= log.device_id || log.ip %></div>
+                                    </td>
+                                    <td class="py-3">
+                                        <% if(log.user_id) { %>
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2">Berhasil</span>
+                                        <% } else { %>
+                                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2">Gagal</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                            <% if(recentLogins.length === 0) { %>
+                                <tr><td colspan="3" class="text-center py-4 text-muted">Belum ada aktivitas login.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Location Monitoring -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold text-dark mb-0"><i class="bi bi-geo-alt text-info me-2"></i> Lokasi & Aktivitas Pendataan</h5>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="clearLogs('activity')" title="Bersihkan Log Aktivitas">
+                    <i class="bi bi-trash3 me-1"></i> Bersihkan Log
+                </button>
+            </div>
+            <div class="card-body px-0 pt-0">
+                <div class="table-responsive" style="max-height: 400px;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-secondary sticky-top">
+                            <tr>
+                                <th class="border-0 ps-4 fw-medium small">WAKTU</th>
+                                <th class="border-0 fw-medium small">PETUGAS</th>
+                                <th class="border-0 fw-medium small">AKSI & LOKASI</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-top-0">
+                            <% recentActivities.forEach(act => { %>
+                                <tr>
+                                    <td class="ps-4 py-3 text-secondary small"><%= new Date(act.timestamp).toLocaleString() %></td>
+                                    <td class="py-3 fw-bold text-dark"><%= act.User ? act.User.nama_lengkap : 'Unknown' %></td>
+                                    <td class="py-3">
+                                        <div class="text-primary fw-medium small"><%= act.action %></div>
+                                        <div class="text-muted small"><i class="bi bi-pin-map me-1"></i><%= act.location %></div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                            <% if(recentActivities.length === 0) { %>
+                                <tr><td colspan="3" class="text-center py-4 text-muted">Belum ada log aktivitas dari aplikasi mobile.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // This script assumes the page has a meta tag for the CSRF token, e.g.:
+    // <meta name="csrf-token" content="<%= csrfToken %>">
+
+    function handleAction(action, logId) {
+        const isTerminating = action === 'terminate';
+        const endpoint = `/admin/monitoring/${action}/${logId}`;
+        const confirmationText = isTerminating
+            ? 'Anda yakin ingin memblokir akses untuk pengguna, IP, dan device terkait ancaman ini? Aksi ini akan menghentikan akses mereka ke sistem.'
+            : 'Anda yakin ingin memulihkan akses untuk pengguna, IP, dan device terkait ancaman ini?';
+
+        if (confirm(confirmationText)) {
+            // Find the CSRF token from a meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Include the CSRF token if found
+                    ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                },
+            })
+            .then(res => {
+                if (!res.ok) {
+                    // Try to get error message from response, else use status text
+                    return res.json().then(err => { throw new Error(err.message || res.statusText) });
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message || 'Aksi berhasil dilakukan.');
+                    window.location.reload();
+                } else {
+                    // The error is already thrown in the previous .then block if res.ok is false
+                    // but as a fallback:
+                    alert('Gagal: ' + (data.message || 'Terjadi kesalahan yang tidak diketahui.'));
+                }
+            })
+            .catch(err => {
+                console.error('Fetch error:', err);
+                alert('Gagal melakukan aksi: ' + err.message);
+            });
+        }
+    }
+
+    function clearLogs(type) {
+        let title = '';
+        if (type === 'security') title = 'Peringatan Keamanan';
+        else if (type === 'login') title = 'Riwayat Login Device';
+        else if (type === 'activity') title = 'Lokasi & Aktivitas Pendataan';
+
+        if (confirm(`Anda yakin ingin membersihkan semua data pada tabel ${title}? Aksi ini tidak dapat dibatalkan.`)) {
+            const endpoint = `/admin/monitoring/clear/${type}`;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(csrfToken && { 'X-CSRF-Token': csrfToken })
+                }
+            })
+            .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, body: data })))
+            .then(res => {
+                if (res.ok && res.body.success) {
+                    alert(res.body.message || 'Log berhasil dibersihkan.');
+                    window.location.reload();
+                } else {
+                    alert('Gagal: ' + (res.body.message || 'Terjadi kesalahan pada server.'));
+                }
+            })
+            .catch(err => {
+                console.error('Clear log error:', err);
+                alert('Gagal menghubungi server.');
+            });
+        }
+    }
+</script>

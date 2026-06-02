@@ -1,0 +1,237 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom border-light">
+    <h1 class="h2 fw-bold text-dark">Data Petugas</h1>
+</div>
+
+
+
+
+
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-header bg-white border-bottom-0 pt-4 pb-3 px-4">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+            <h5 class="card-title fw-bold text-dark mb-0"><i class="bi bi-person-lines-fill text-primary me-2"></i> Daftar Petugas</h5>
+            <button class="btn btn-primary rounded-pill shadow-sm px-4 fw-medium" data-bs-toggle="modal" data-bs-target="#addModal">
+                <i class="bi bi-plus-lg me-1"></i> Tambah Petugas
+            </button>
+        </div>
+    </div>
+    <div class="card-body px-0 pt-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-secondary">
+                    <tr>
+                        <th class="border-0 ps-4 fw-medium text-uppercase small" style="letter-spacing: 0.5px;">Nama Lengkap</th>
+                        <th class="border-0 fw-medium text-uppercase small d-none d-md-table-cell" style="letter-spacing: 0.5px;">Username</th>
+                        <th class="border-0 fw-medium text-uppercase small" style="letter-spacing: 0.5px;">Wilayah Dusun</th>
+                        <th class="border-0 pe-4 fw-medium text-uppercase small text-end" style="letter-spacing: 0.5px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    <% users.forEach(u => { %>
+                        <tr>
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar bg-primary text-white rounded-circle d-none d-sm-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 40px; height: 40px; font-weight: 600;">
+                                        <%= u.nama_lengkap.charAt(0).toUpperCase() %>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark"><%= u.nama_lengkap %></div>
+                                        <div class="d-md-none small text-muted">@<%= u.username %></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3 text-secondary d-none d-md-table-cell"><span class="badge bg-light text-dark border px-2 py-1 rounded-pill"><i class="bi bi-at me-1"></i><%= u.username %></span></td>
+                            <td class="py-3 text-secondary">
+                                <% if (u.Dusun) { %>
+                                    <span class="badge bg-info bg-opacity-10 text-info px-2 py-1 rounded-pill border border-info border-opacity-25"><i class="bi bi-geo-alt-fill me-1"></i><%= u.Dusun.nama_dusun %></span>
+                                <% } else { %>
+                                    <span class="text-muted fst-italic">-</span>
+                                <% } %>
+                            </td>
+                            <td class="pe-4 py-3 text-end">
+                                <div class="btn-group shadow-sm rounded-pill" role="group">
+                                    <button class="btn btn-light btn-sm text-primary border border-end-0 px-2 px-md-3" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editModal"
+                                            data-id="<%= u.id %>"
+                                            data-nama="<%= u.nama_lengkap %>"
+                                            data-username="<%= u.username %>"
+                                            data-dusun="<%= u.dusun_id %>">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-light btn-sm text-danger border px-2 px-md-3 rounded-start-0" onclick="confirmDeleteUser('<%= u.id %>')">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                    <form id="deleteUserForm<%= u.id %>" action="/admin/users/delete/<%= u.id %>" method="POST" class="d-none">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    </form>
+                                </div>
+                            </td>                        </tr>
+                    <% }) %>
+                    <% if (users.length === 0) { %>
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3 text-secondary opacity-50"></i>
+                                Belum ada data petugas
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="/admin/users" method="POST" class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="modal-header bg-light border-bottom-0 pt-4 pb-3 px-4">
+                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-person-plus text-primary me-2"></i> Tambah Petugas Baru</h5>
+                <button type="button" class="btn-close bg-secondary bg-opacity-10 rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-4">
+                <div class="mb-4">
+                    <label class="form-label fw-medium text-secondary small">Nama Lengkap <span class="text-danger">*</span></label>
+                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-person"></i></span>
+                        <input type="text" name="nama_lengkap" class="form-control border-start-0 ps-0 bg-white" placeholder="Masukkan nama lengkap" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-medium text-secondary small">Username <span class="text-danger">*</span></label>
+                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-at"></i></span>
+                        <input type="text" name="username" class="form-control border-start-0 ps-0 bg-white" placeholder="Masukkan username" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-medium text-secondary small">Password <span class="text-danger">*</span></label>
+                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-lock"></i></span>
+                        <input type="password" name="password" class="form-control border-start-0 ps-0 bg-white" placeholder="Masukkan password" required>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-medium text-secondary small">Wilayah Dusun <span class="text-danger">*</span></label>
+                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-geo-alt"></i></span>
+                        <select name="dusun_id" class="form-select border-start-0 ps-0 bg-white" required>
+                            <option value="" disabled selected>Pilih wilayah dusun penugasan</option>
+                            <% dusun.forEach(d => { %>
+                                <option value="<%= d.id %>"><%= d.nama_dusun %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top-0 pt-3 pb-4 px-4">
+                <button type="button" class="btn btn-light border-0 shadow-sm rounded-pill px-4 fw-medium text-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary shadow-sm rounded-pill px-4 fw-medium"><i class="bi bi-save me-2"></i> Simpan Petugas</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="editForm" action="/admin/users/edit" method="POST" class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="modal-header bg-light border-bottom-0 pt-4 pb-3 px-4">
+                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-pencil-square text-primary me-2"></i> Edit Data Petugas</h5>
+                <button type="button" class="btn-close bg-secondary bg-opacity-10 rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-4">
+                <div class="mb-4">
+                    <label class="form-label fw-medium text-secondary small">Nama Lengkap <span class="text-danger">*</span></label>
+                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-person"></i></span>
+                        <input type="text" name="nama_lengkap" id="edit_nama_lengkap" class="form-control border-start-0 ps-0 bg-white" placeholder="Masukkan nama lengkap" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-medium text-secondary small">Username <span class="text-danger">*</span></label>
+                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-at"></i></span>
+                        <input type="text" name="username" id="edit_username" class="form-control border-start-0 ps-0 bg-white" placeholder="Masukkan username" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-medium text-secondary small">Password (Kosongkan jika tidak ingin diubah)</label>
+                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-lock"></i></span>
+                        <input type="password" name="password" class="form-control border-start-0 ps-0 bg-white" placeholder="Masukkan password baru">
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-medium text-secondary small">Wilayah Dusun <span class="text-danger">*</span></label>
+                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-geo-alt"></i></span>
+                        <select name="dusun_id" id="edit_dusun_id" class="form-select border-start-0 ps-0 bg-white" required>
+                            <option value="" disabled>Pilih wilayah dusun penugasan</option>
+                            <% dusun.forEach(d => { %>
+                                <option value="<%= d.id %>"><%= d.nama_dusun %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top-0 pt-3 pb-4 px-4">
+                <button type="button" class="btn btn-light border-0 shadow-sm rounded-pill px-4 fw-medium text-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary shadow-sm rounded-pill px-4 fw-medium"><i class="bi bi-save me-2"></i> Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function confirmDeleteUser(id) {
+        Swal.fire({
+            title: 'Hapus Petugas?',
+            text: "Akses petugas ini ke aplikasi akan dicabut secara permanen.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                popup: 'rounded-4 shadow-lg border-0',
+                confirmButton: 'btn btn-danger rounded-pill px-4',
+                cancelButton: 'btn btn-light rounded-pill px-4 ms-2'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.getElementById('deleteUserForm' + id);
+                if (form) {
+                    form.submit();
+                } else {
+                    console.error('Delete form not found for ID:', id);
+                }
+            }
+        })
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const editModal = document.getElementById('editModal');
+        if (editModal) {
+            editModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const nama = button.getAttribute('data-nama');
+                const username = button.getAttribute('data-username');
+                const dusunId = button.getAttribute('data-dusun');
+
+                const form = editModal.querySelector('#editForm');
+                form.action = `/admin/users/edit/${id}`;
+                
+                editModal.querySelector('#edit_nama_lengkap').value = nama || '';
+                editModal.querySelector('#edit_username').value = username || '';
+                editModal.querySelector('#edit_dusun_id').value = dusunId || '';
+            });
+        }
+    });
+</script>

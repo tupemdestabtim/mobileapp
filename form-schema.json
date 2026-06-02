@@ -1,0 +1,865 @@
+{
+  "formId": "pendataan_penduduk",
+  "title": "Form Pendataan Penduduk Terpadu",
+  "description": "Formulir komprehensif untuk pengumpulan data demografi, sanitasi, kesehatan, dan aset warga.",
+  "sections": [
+    {
+      "sectionId": "biodata_umum",
+      "title": "1. Form Biodata Umum",
+      "description": "Informasi dasar kependudukan dan identitas warga.",
+      "fields": [
+        {
+          "name": "nik",
+          "label": "Nomor Induk Kependudukan (NIK)",
+          "type": "text",
+          "validation": {
+            "required": true,
+            "minLength": 16,
+            "maxLength": 16,
+            "pattern": "^[0-9]+$"
+          },
+          "placeholder": "Masukkan 16 digit NIK"
+        },
+        {
+          "name": "no_kk",
+          "label": "Nomor Kartu Keluarga (KK)",
+          "type": "text",
+          "validation": {
+            "required": true,
+            "minLength": 16,
+            "maxLength": 16,
+            "pattern": "^[0-9]+$"
+          },
+          "placeholder": "Masukkan 16 digit No KK"
+        },
+        {
+          "name": "nama_lengkap",
+          "label": "Nama Lengkap (Sesuai KTP)",
+          "type": "text",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "tempat_lahir",
+          "label": "Tempat Lahir",
+          "type": "text",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "tanggal_lahir",
+          "label": "Tanggal Lahir",
+          "type": "date",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "umur",
+          "label": "Umur (Tahun)",
+          "type": "number",
+          "validation": {
+            "required": true
+          },
+          "placeholder": "Terisi otomatis",
+          "readOnly": true
+        },
+        {
+          "name": "jenis_kelamin",
+          "label": "Jenis Kelamin",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Laki-laki",
+              "value": "L"
+            },
+            {
+              "label": "Perempuan",
+              "value": "P"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "agama",
+          "label": "Agama",
+          "type": "select",
+          "options": [
+            {
+              "label": "Islam",
+              "value": "islam"
+            },
+            {
+              "label": "Kristen",
+              "value": "kristen"
+            },
+            {
+              "label": "Katolik",
+              "value": "katolik"
+            },
+            {
+              "label": "Hindu",
+              "value": "hindu"
+            },
+            {
+              "label": "Buddha",
+              "value": "buddha"
+            },
+            {
+              "label": "Konghucu",
+              "value": "konghucu"
+            },
+            {
+              "label": "Aliran Kepercayaan",
+              "value": "kepercayaan"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "pendidikan_terakhir",
+          "label": "Pendidikan Terakhir",
+          "type": "select",
+          "options": [
+            {
+              "label": "Tidak/Belum Sekolah",
+              "value": "tidak_sekolah"
+            },
+            {
+              "label": "Tamat SD/Sederajat",
+              "value": "sd"
+            },
+            {
+              "label": "SLTP/Sederajat",
+              "value": "smp"
+            },
+            {
+              "label": "SLTA/Sederajat",
+              "value": "sma"
+            },
+            {
+              "label": "Diploma I/II",
+              "value": "d1_d2"
+            },
+            {
+              "label": "Akademi/Diploma III/S.Muda",
+              "value": "d3"
+            },
+            {
+              "label": "Diploma IV/Strata I",
+              "value": "s1"
+            },
+            {
+              "label": "Strata II",
+              "value": "s2"
+            },
+            {
+              "label": "Strata III",
+              "value": "s3"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "pekerjaan_utama",
+          "label": "Pekerjaan Utama",
+          "type": "text",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "status_perkawinan",
+          "label": "Status Perkawinan",
+          "type": "select",
+          "options": [
+            {
+              "label": "Belum Kawin",
+              "value": "belum_kawin"
+            },
+            {
+              "label": "Kawin",
+              "value": "kawin"
+            },
+            {
+              "label": "Cerai Hidup",
+              "value": "cerai_hidup"
+            },
+            {
+              "label": "Cerai Mati",
+              "value": "cerai_mati"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+
+        {
+          "name": "status_dalam_keluarga",
+          "label": "Status Dalam Keluarga",
+          "type": "select",
+          "options": [
+            {
+              "label": "Kepala Keluarga",
+              "value": "kepala_keluarga"
+            },
+            {
+              "label": "Anggota Keluarga",
+              "value": "anggota_keluarga"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+
+        {
+          "name": "alamat_lengkap",
+          "label": "Alamat Domisili Lengkap",
+          "type": "textarea",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "dusun",
+          "label": "DUSUN",
+          "type": "text",
+          "validation": {
+            "required": true,
+            "maxLength": 50
+          }
+        }
+      ]
+    },
+    {
+      "sectionId": "data_sanitasi",
+      "title": "2. Form Data Sanitasi",
+      "description": "Informasi mengenai fasilitas air bersih dan kebersihan lingkungan tempat tinggal.",
+      "fields": [
+        {
+          "name": "sumber_air_minum",
+          "label": "Sumber Air Minum Utama",
+          "type": "select",
+          "options": [
+            {
+              "label": "KP-SPAM",
+              "value": "kp-spam"
+            },
+            {
+              "label": "Leding/PDAM",
+              "value": "pdam"
+            },
+            {
+              "label": "Sumur Bor/Pompa",
+              "value": "sumur_bor"
+            },
+            {
+              "label": "Sumur Gali Terlindung",
+              "value": "sumur_terlindung"
+            },
+            {
+              "label": "Mata Air Terlindung",
+              "value": "mata_air_terlindung"
+            },
+            {
+              "label": "Air Hujan",
+              "value": "air_hujan"
+            },
+            {
+              "label": "Sumber Tidak Terlindung (Sungai, dll)",
+              "value": "tidak_terlindung"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "kualitas_air_minum",
+          "label": "Kualitas Air Minum",
+          "type": "select",
+          "options": [
+            {
+              "label": "Baik (Tidak Berbau, Tidak Berwarna, Tidak Berasa)",
+              "value": "baik"
+            },
+            {
+              "label": "Buruk (Keruh/Berbau/Berasa)",
+              "value": "buruk"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "fasilitas_bab",
+          "label": "Fasilitas Tempat Buang Air Besar (BAB)",
+          "type": "select",
+          "options": [
+            {
+              "label": "Milik Sendiri",
+              "value": "sendiri"
+            },
+            {
+              "label": "Gunakan Bersama/Keluarga Tertentu",
+              "value": "bersama"
+            },
+            {
+              "label": "MCK Umum",
+              "value": "umum"
+            },
+            {
+              "label": "Tidak Ada (Sungai, Kebun, Pantai)",
+              "value": "tidak_ada"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "jenis_kloset",
+          "label": "Jenis Kloset",
+          "type": "select",
+          "options": [
+            {
+              "label": "Leher Angsa",
+              "value": "leher_angsa"
+            },
+            {
+              "label": "Plengsengan",
+              "value": "plengsengan"
+            },
+            {
+              "label": "Cemplung/Nganga",
+              "value": "cemplung"
+            },
+            {
+              "label": "Tidak Menggunakan Kloset",
+              "value": "tidak_ada"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "pembuangan_akhir_tinja",
+          "label": "Tempat Pembuangan Akhir Tinja",
+          "type": "select",
+          "options": [
+            {
+              "label": "Tangki Septik (Septic Tank)",
+              "value": "septic_tank"
+            },
+            {
+              "label": "SPAL (Sistem Pengelolaan Air Limbah)",
+              "value": "spal"
+            },
+            {
+              "label": "Kolam/Sawah/Sungai/Danau",
+              "value": "sungai"
+            },
+            {
+              "label": "Lubang Tanah",
+              "value": "tanah"
+            },
+            {
+              "label": "Lainnya",
+              "value": "lainnya"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "pengelolaan_sampah",
+          "label": "Pengelolaan Sampah Rumah Tangga",
+          "type": "select",
+          "options": [
+            {
+              "label": "Diangkut Petugas Kebersihan",
+              "value": "diangkut"
+            },
+            {
+              "label": "Dibuang ke Tempat Sampah Umum",
+              "value": "tps"
+            },
+            {
+              "label": "Ditimbun/Dikubur",
+              "value": "dikubur"
+            },
+            {
+              "label": "Dibakar",
+              "value": "dibakar"
+            },
+            {
+              "label": "Dibuang Sembarangan (Sungai, Kebun)",
+              "value": "sembarangan"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "sectionId": "data_kesehatan",
+      "title": "3. Form Data Kesehatan",
+      "description": "Informasi jaminan kesehatan, riwayat penyakit, dan status gizi/kesehatan anggota keluarga.",
+      "fields": [
+        {
+          "name": "jaminan_kesehatan",
+          "label": "Kepemilikan Jaminan Kesehatan (Asuransi)",
+          "type": "select",
+          "options": [
+            {
+              "label": "BPJS PBI (Pemerintah)",
+              "value": "bpjs_pbi"
+            },
+            {
+              "label": "BPJS Non-PBI (Mandiri/Perusahaan)",
+              "value": "bpjs_non_pbi"
+            },
+            {
+              "label": "Asuransi Swasta",
+              "value": "swasta"
+            },
+            {
+              "label": "Tidak Memiliki Jaminan",
+              "value": "tidak_ada"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "riwayat_penyakit_kronis",
+          "label": "Riwayat Penyakit Kronis/Menular (Pilih yang sesuai)",
+          "type": "checkbox_group",
+          "options": [
+            {
+              "label": "Tidak Ada",
+              "value": "tidak_ada"
+            },
+            {
+              "label": "Hipertensi",
+              "value": "hipertensi"
+            },
+            {
+              "label": "Diabetes Mellitus",
+              "value": "diabetes"
+            },
+            {
+              "label": "Jantung",
+              "value": "jantung"
+            },
+            {
+              "label": "TBC (Tuberkulosis)",
+              "value": "tbc"
+            },
+            {
+              "label": "Asma",
+              "value": "asma"
+            },
+            {
+              "label": "Kanker",
+              "value": "kanker"
+            },
+            {
+              "label": "Lainnya",
+              "value": "lainnya"
+            }
+          ]
+        },
+        {
+          "name": "status_disabilitas",
+          "label": "Status Disabilitas",
+          "type": "select",
+          "options": [
+            {
+              "label": "Tidak Ada",
+              "value": "tidak_ada"
+            },
+            {
+              "label": "Tunanetra (Penglihatan)",
+              "value": "tunanetra"
+            },
+            {
+              "label": "Tunarungu (Pendengaran)",
+              "value": "tunarungu"
+            },
+            {
+              "label": "Tunawicara (Bicara)",
+              "value": "tunawicara"
+            },
+            {
+              "label": "Tunadaksa (Tubuh/Fisik)",
+              "value": "tunadaksa"
+            },
+            {
+              "label": "Tunagrahita (Mental/Intelektual)",
+              "value": "tunagrahita"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+    {
+  "name": "jenis_kb",
+  "label": "Jenis KB Yang digunakan",
+  "type": "select",
+  "options": [
+    {
+      "label": "Tidak Ada",
+      "value": "tidak_ada"
+    },
+    {
+      "label": "PIL",
+      "value": "pil"
+    },
+    {
+      "label": "Implan",
+      "value": "implan"
+    },
+    {
+      "label": "Suntik",
+      "value": "suntik"
+    }
+  ],
+  "validation": {
+    "required": true
+  },
+  "conditional": {
+    "logic": "AND",
+    "rules": [
+      {
+        "field": "jenis_kelamin",
+        "operator": "equals",
+        "value": "P"
+      },
+      {
+        "field": "umur",
+        "operator": "greater_than",
+        "value": 17
+      },
+      {
+        "field": "umur",
+        "operator": "less_than",
+        "value": 50
+      },
+       {
+        "field": "status_perkawinan",
+        "operator": "equals",
+        "value": "Kawin"
+      }
+    ]
+  }
+},
+
+
+
+
+        {
+          "name": "frekuensi_makan",
+          "label": "Rata-rata Frekuensi Makan Utama Sehari",
+          "type": "number",
+          "validation": {
+            "required": true,
+            "min": 1,
+            "max": 5
+          },
+          "placeholder": "Contoh: 3"
+        },
+        {
+          "name": "fasilitas_kesehatan_rutin",
+          "label": "Fasilitas Kesehatan yang Paling Sering Dikunjungi",
+          "type": "select",
+          "options": [
+            {
+              "label": "Puskesmas/Pustu",
+              "value": "puskesmas"
+            },
+            {
+              "label": "Klinik Pratama/Dokter Praktik",
+              "value": "klinik"
+            },
+            {
+              "label": "Rumah Sakit",
+              "value": "rs"
+            },
+            {
+              "label": "Bidan/Mantri",
+              "value": "bidan"
+            },
+            {
+              "label": "Pengobatan Alternatif/Tradisional",
+              "value": "tradisional"
+            },
+            {
+              "label": "Tidak Pernah Berobat",
+              "value": "tidak_pernah"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "sectionId": "kepemilikan_aset",
+      "title": "4. Form Data Kepemilikan Aset",
+      "description": "Informasi kondisi tempat tinggal, aset fisik, dan sarana transportasi yang dimiliki.",
+      "fields": [
+        {
+          "name": "status_kepemilikan_rumah",
+          "label": "Status Kepemilikan Bangunan Tempat Tinggal",
+          "type": "select",
+          "options": [
+            {
+              "label": "Milik Sendiri",
+              "value": "milik_sendiri"
+            },
+            {
+              "label": "Kontrak/Sewa",
+              "value": "kontrak"
+            },
+            {
+              "label": "Bebas Sewa/Menumpang",
+              "value": "bebas_sewa"
+            },
+            {
+              "label": "Rumah Dinas",
+              "value": "rumah_dinas"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "luas_lantai",
+          "label": "Luas Lantai Bangunan Tempat Tinggal (m2)",
+          "type": "number",
+          "validation": {
+            "required": true,
+            "min": 1
+          },
+          "placeholder": "Contoh: 36"
+        },
+        {
+          "name": "jenis_lantai",
+          "label": "Jenis Lantai Terluas",
+          "type": "select",
+          "options": [
+            {
+              "label": "Marmer/Granit/Keramik",
+              "value": "keramik"
+            },
+            {
+              "label": "Ubin/Tegel/Semen",
+              "value": "semen"
+            },
+            {
+              "label": "Kayu/Papan Berkualitas Baik",
+              "value": "kayu_baik"
+            },
+            {
+              "label": "Bambu/Kayu Kualitas Rendah",
+              "value": "bambu"
+            },
+            {
+              "label": "Tanah",
+              "value": "tanah"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "jenis_dinding",
+          "label": "Jenis Dinding Terluas",
+          "type": "select",
+          "options": [
+            {
+              "label": "Tembok/Beton",
+              "value": "tembok"
+            },
+            {
+              "label": "Kayu/Papan",
+              "value": "kayu"
+            },
+            {
+              "label": "Bambu/Anyaman",
+              "value": "bambu"
+            },
+            {
+              "label": "Seng/Lainnya",
+              "value": "lainnya"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "jenis_atap",
+          "label": "Jenis Atap Terluas",
+          "type": "select",
+          "options": [
+            {
+              "label": "Genteng/Beton",
+              "value": "genteng"
+            },
+            {
+              "label": "Seng/Asbes",
+              "value": "seng_asbes"
+            },
+            {
+              "label": "Kayu/Sirap",
+              "value": "kayu"
+            },
+            {
+              "label": "Bambu/Daun/Rumbia",
+              "value": "rumbia"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "sumber_penerangan",
+          "label": "Sumber Penerangan Utama",
+          "type": "select",
+          "options": [
+            {
+              "label": "Listrik PLN Meteran",
+              "value": "pln_meteran"
+            },
+            {
+              "label": "Listrik PLN Non-Meteran (Nyalur)",
+              "value": "pln_nyalur"
+            },
+            {
+              "label": "Listrik Non-PLN (Genset/Surya)",
+              "value": "non_pln"
+            },
+            {
+              "label": "Bukan Listrik (Petromak/Pelita/Lilin)",
+              "value": "bukan_listrik"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "bahan_bakar_memasak",
+          "label": "Bahan Bakar Utama untuk Memasak",
+          "type": "select",
+          "options": [
+            {
+              "label": "Listrik/Microwave",
+              "value": "listrik"
+            },
+            {
+              "label": "Gas LPG",
+              "value": "lpg"
+            },
+            {
+              "label": "Minyak Tanah",
+              "value": "minyak_tanah"
+            },
+            {
+              "label": "Kayu Bakar/Arang",
+              "value": "kayu_bakar"
+            }
+          ],
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "name": "aset_kendaraan",
+          "label": "Aset Kendaraan Transportasi",
+          "type": "checkbox_group",
+          "options": [
+            {
+              "label": "Tidak Ada",
+              "value": "tidak_ada"
+            },
+            {
+              "label": "Sepeda Roda Dua",
+              "value": "sepeda"
+            },
+            {
+              "label": "Sepeda Motor",
+              "value": "motor"
+            },
+            {
+              "label": "Mobil/Minibus",
+              "value": "mobil"
+            },
+            {
+              "label": "Perahu/Motor Tempel",
+              "value": "perahu"
+            },
+            {
+              "label": "Truk/Pikap",
+              "value": "truk"
+            }
+          ]
+        },
+        {
+          "name": "aset_elektronik",
+          "label": "Aset Elektronik & Komunikasi Pribadi",
+          "type": "checkbox_group",
+          "options": [
+            {
+              "label": "Telepon Pintar (Smartphone)",
+              "value": "smartphone"
+            },
+            {
+              "label": "Televisi (TV)",
+              "value": "tv"
+            },
+            {
+              "label": "Kulkas/Lemari Es",
+              "value": "kulkas"
+            },
+            {
+              "label": "Komputer/Laptop",
+              "value": "laptop"
+            },
+            {
+              "label": "AC (Pendingin Ruangan)",
+              "value": "ac"
+            },
+            {
+              "label": "Internet WiFi Berlangganan",
+              "value": "wifi"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

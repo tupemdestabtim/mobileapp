@@ -1,0 +1,177 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Pengaturan Aplikasi</h1>
+</div>
+
+
+
+
+<div class="row">
+    <!-- Left Column: Branding Settings -->
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0 mb-4" style="border-radius: 1rem;">
+            <div class="card-header bg-dark text-white border-0 py-3" style="border-radius: 1rem 1rem 0 0;">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-palette me-2"></i> Branding & Identitas</h5>
+            </div>
+            <form action="/admin/settings?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data" class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Judul Aplikasi</label>
+                        <input type="text" name="app_title" class="form-control" value="<%= config.app_title %>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Nama Desa/Wilayah</label>
+                        <input type="text" name="village_name" class="form-control" value="<%= config.village_name %>" required>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <label class="form-label fw-bold">Pesan Selamat Datang</label>
+                        <textarea name="welcome_message" class="form-control" rows="2" required><%= config.welcome_message %></textarea>
+                    </div>
+                    <div class="col-md-12 mt-4">
+                        <label class="form-label fw-bold">Update Logo Aplikasi</label>
+                        <input type="file" name="app_logo" class="form-control" accept="image/*">
+                        <div class="form-text text-muted">Format: PNG/JPG. Disarankan background transparan.</div>
+                    </div>
+                </div>
+
+                <hr class="my-4 opacity-10">
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary px-5 py-2 rounded-pill fw-bold shadow-sm">
+                        <i class="bi bi-save me-2"></i> Simpan Perubahan Branding
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Version History Table -->
+        <div class="card shadow-sm border-0" style="border-radius: 1rem;">
+            <div class="card-header bg-white border-bottom py-3" style="border-radius: 1rem 1rem 0 0;">
+                <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-clock-history me-2 text-primary"></i> Riwayat Versi Aplikasi</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Versi</th>
+                                <th>Keterangan</th>
+                                <th>Tanggal</th>
+                                <th class="text-end pe-4">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% versions.forEach(v => { %>
+                                <tr>
+                                    <td class="ps-4">
+                                        <span class="fw-bold text-primary"><%= v.version_name %></span>
+                                        <% if(v.is_active) { %>
+                                            <span class="badge bg-success rounded-pill ms-1">Aktif</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div class="small text-muted text-truncate" style="max-width: 200px;"><%= v.release_notes || '-' %></div>
+                                    </td>
+                                    <td class="small"><%= new Date(v.created_at).toLocaleDateString('id-ID') %></td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group">
+                                            <a href="<%= v.apk_url %>" class="btn btn-sm btn-outline-primary" title="Download APK"><i class="bi bi-download"></i></a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDeleteVersion('<%= v.id %>')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <form id="deleteVersionForm<%= v.id %>" action="/admin/settings/version/delete/<%= v.id %>" method="POST" class="d-none">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                            <% if (versions.length === 0) { %>
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted small">Belum ada riwayat update.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column: Upload New Version & Preview -->
+    <div class="col-md-5">
+        <!-- Current Logo Preview -->
+        <div class="card shadow-sm border-0 mb-4" style="border-radius: 1rem;">
+            <div class="card-header bg-info text-white border-0 py-3" style="border-radius: 1rem 1rem 0 0;">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-image me-2"></i> Logo Saat Ini</h5>
+            </div>
+            <div class="card-body text-center p-4">
+                <div class="mb-3">
+                    <% if (config.app_logo_url) { %>
+                        <img src="<%= config.app_logo_url %>" class="img-fluid rounded shadow-sm border border-5 border-light" style="width: 120px; height: 120px; object-fit: contain; background: #f8f9fa;">
+                    <% } else { %>
+                        <div class="rounded shadow-sm border border-5 border-light d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px; background: #e9ecef;">
+                            <i class="bi bi-image text-muted" style="font-size: 2.5rem;"></i>
+                        </div>
+                    <% } %>
+                </div>
+                <p class="small text-muted mb-0">Logo ini tampil di Header & Login aplikasi.</p>
+            </div>
+        </div>
+
+        <!-- Upload New APK -->
+        <div class="card shadow-sm border-0" style="border-radius: 1rem; border: 2px dashed #0d6efd !important;">
+            <div class="card-header bg-primary text-white border-0 py-3" style="border-radius: 0.8rem 0.8rem 0 0;">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-cloud-upload me-2"></i> Rilis Versi Baru (APK)</h5>
+            </div>
+            <form action="/admin/settings/version?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data" class="card-body p-4">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Nomor Versi <span class="text-danger">*</span></label>
+                    <input type="text" name="version_name" class="form-control" placeholder="Contoh: 1.0.2" required>
+                    <div class="form-text small">Harus lebih tinggi dari versi saat ini (<%= config.mobile_app_version %>) agar terbaca sebagai update.</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Catatan Rilis <span class="text-danger">*</span></label>
+                    <textarea name="release_notes" class="form-control" rows="3" placeholder="Apa yang baru di versi ini?" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold small">File APK Aplikasi <span class="text-danger">*</span></label>
+                    <input type="file" name="apk_file" class="form-control" accept=".apk" required>
+                    <div class="form-text small">Ukuran maksimal 50MB.</div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold shadow">
+                    <i class="bi bi-send-check me-2"></i> Upload & Aktifkan Update
+                </button>
+            </form>
+        </div>
+
+        <div class="alert alert-warning border-0 shadow-sm mt-4" style="border-radius: 1rem;">
+            <h6 class="fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i> Penting!</h6>
+            <p class="small mb-0">Setelah klik "Upload", semua petugas yang membuka aplikasi akan langsung mendapatkan notifikasi pembaruan beserta catatan rilis yang Anda tulis di atas.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDeleteVersion(id) {
+        Swal.fire({
+            title: 'Hapus Versi?',
+            text: "Riwayat versi dan file APK akan dihapus permanen dari server.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                popup: 'rounded-4 shadow-lg border-0',
+                confirmButton: 'btn btn-danger rounded-pill px-4',
+                cancelButton: 'btn btn-light rounded-pill px-4 ms-2'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('deleteVersionForm' + id).submit();
+            }
+        })
+    }
+</script>

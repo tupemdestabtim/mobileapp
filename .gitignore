@@ -1,0 +1,41 @@
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+moble-app/build/
+moble-app/app/build/
+moble-app/.gradle/
+moble-app/local.properties
+moble-app/.idea/
+
+# Android generated
+moble-app/**/*.apk
+moble-app/**/*.aab
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Runtime uploads
+src/public/uploads/
+*.zip
+*.apk
+*.aab
+
+# Others
+SECURITY_AUDIT.md
+laporan.md

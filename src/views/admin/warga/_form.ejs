@@ -1,0 +1,220 @@
+<div class="row g-4">
+    <% schema.sections.forEach((section, sIdx) => { %>
+        <div class="col-12 mb-2">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header border-bottom-0 pt-4 pb-3 px-4 bg-<%= ['primary', 'success', 'info', 'warning', 'secondary', 'dark'][sIdx % 6] %> bg-opacity-10">
+                    <h5 class="card-title fw-bold mb-0 text-<%= ['primary', 'success', 'info', 'warning', 'secondary', 'dark'][sIdx % 6] %>">
+                        <i class="bi bi-file-earmark-text me-2"></i> <%= section.title %>
+                    </h5>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <% if (section.description) { %>
+                        <p class="text-muted small mb-4 pb-2 border-bottom border-light"><%= section.description %></p>
+                    <% } %>
+                    <div class="row g-4">
+                        <% section.fields.forEach(field => { %>
+                            <div class="<%= (field.type === 'textarea' || field.type === 'checkbox_group') ? 'col-12' : 'col-md-6' %> field-container" 
+                                 data-field-name="<%= field.name %>"
+                                 data-conditional='<%= field.conditional ? JSON.stringify(field.conditional) : "" %>'>
+                                <label class="form-label fw-medium text-secondary small mb-2">
+                                    <%= field.label %>
+                                    <% if (field.validation && field.validation.required) { %>
+                                        <span class="text-danger fw-bold ms-1">*</span>
+                                    <% } %>
+                                </label>
+
+                                <% if (field.name === 'dusun') { %>
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-geo-alt"></i></span>
+                                        <% if (user && user.role === 'petugas') { %>
+                                            <input type="hidden" name="dusun_id" value="<%= user.dusun_id %>">
+                                            <input type="text" class="form-control border-start-0 ps-0 bg-light" value="<%= (dusun.find(d => d.id == user.dusun_id) || {}).nama_dusun %>" readonly disabled>
+                                        <% } else { %>
+                                            <select name="dusun_id" class="form-select border-start-0 ps-0 bg-white" <%= (field.validation && field.validation.required) ? 'required' : '' %>>
+                                                <option value="" disabled <%= !warga.dusun_id ? 'selected' : '' %>>Pilih wilayah dusun</option>
+                                                <% dusun.forEach(d => { %>
+                                                    <option value="<%= d.id %>" <%= (warga.dusun_id == d.id) ? 'selected' : '' %>><%= d.nama_dusun %></option>
+                                                <% }) %>
+                                            </select>
+                                        <% } %>
+                                    </div>
+
+                                <% } else if (field.type === 'text' || field.type === 'number') { %>
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden <%= (field.readOnly || field.name === 'umur') ? 'bg-light' : 'bg-white' %>">
+                                        <% if (field.type === 'number') { %>
+                                            <span class="input-group-text bg-transparent border-end-0 text-primary"><i class="bi bi-123"></i></span>
+                                        <% } else if (field.name.toLowerCase().includes('nik')) { %>
+                                            <span class="input-group-text bg-transparent border-end-0 text-primary"><i class="bi bi-upc-scan"></i></span>
+                                        <% } else if (field.name.toLowerCase().includes('nama')) { %>
+                                            <span class="input-group-text bg-transparent border-end-0 text-primary"><i class="bi bi-person"></i></span>
+                                        <% } else { %>
+                                            <span class="input-group-text bg-transparent border-end-0 text-primary"><i class="bi bi-pencil"></i></span>
+                                        <% } %>
+                                        <input type="<%= field.type === 'number' ? 'number' : 'text' %>" 
+                                               name="<%= field.name %>" 
+                                               id="field_<%= field.name %>"
+                                               class="form-control border-start-0 ps-0 bg-transparent" 
+                                               value="<%= (warga[field.name] !== null && warga[field.name] !== undefined) ? warga[field.name] : '' %>"
+                                               placeholder="<%= field.placeholder || 'Masukkan ' + field.label.toLowerCase() %>"
+                                               <%= (field.readOnly || field.name === 'umur') ? 'readonly tabindex="-1"' : '' %>
+                                               <%= (field.validation && field.validation.required) ? 'required' : '' %>
+                                               <%= (field.validation && field.validation.maxLength) ? `maxlength="${field.validation.maxLength}"` : '' %>
+                                               <%= (field.validation && field.validation.minLength) ? `minlength="${field.validation.minLength}"` : '' %>
+                                               <%= (field.validation && field.validation.pattern) ? `pattern="${field.validation.pattern}"` : '' %>>
+                                    </div>
+                                
+                                <% } else if (field.type === 'date') { %>
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-calendar"></i></span>
+                                        <input type="date" name="<%= field.name %>" id="field_<%= field.name %>" class="form-control border-start-0 ps-0 bg-white" value="<%= warga[field.name] || '' %>" <%= (field.validation && field.validation.required) ? 'required' : '' %>>
+                                    </div>
+
+                                <% } else if (field.type === 'textarea') { %>
+                                    <div class="shadow-sm rounded-3 overflow-hidden">
+                                        <textarea name="<%= field.name %>" id="field_<%= field.name %>" class="form-control border bg-white p-3" rows="3" placeholder="<%= field.placeholder || 'Ketikkan ' + field.label.toLowerCase() %>" <%= (field.validation && field.validation.required) ? 'required' : '' %>><%= warga[field.name] || '' %></textarea>
+                                    </div>
+
+                                <% } else if (field.type === 'select') { %>
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border-end-0 text-primary"><i class="bi bi-list-ul"></i></span>
+                                        <select name="<%= field.name %>" id="field_<%= field.name %>" class="form-select border-start-0 ps-0 bg-white" <%= (field.validation && field.validation.required) ? 'required' : '' %>>
+                                            <option value="" disabled <%= !warga[field.name] ? 'selected' : '' %>>Pilih <%= field.label %></option>
+                                            <% (field.options || []).forEach(opt => { %>
+                                                <option value="<%= opt.value %>" <%= warga[field.name] === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+                                            <% }) %>
+                                        </select>
+                                    </div>
+
+                                <% } else if (field.type === 'radio') { %>
+                                    <div class="d-flex flex-wrap gap-4 mt-2 px-2">
+                                        <% (field.options || []).forEach((opt, idx) => { %>
+                                            <div class="form-check custom-radio">
+                                                <input class="form-check-input border-secondary shadow-sm" type="radio" name="<%= field.name %>" id="<%= field.name %>_<%= idx %>" value="<%= opt.value %>" <%= warga[field.name] === opt.value ? 'checked' : '' %> <%= (field.validation && field.validation.required) ? 'required' : '' %>>
+                                                <label class="form-check-label fw-medium" for="<%= field.name %>_<%= idx %>"><%= opt.label %></label>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+
+                                <% } else if (field.type === 'checkbox_group') { %>
+                                    <div class="d-flex flex-wrap gap-4 mt-2 px-2 bg-light p-3 rounded-3 border">
+                                        <% (field.options || []).forEach((opt, idx) => { %>
+                                            <div class="form-check custom-checkbox">
+                                                <input class="form-check-input border-secondary shadow-sm" type="checkbox" name="<%= field.name %>[]" id="<%= field.name %>_<%= idx %>" value="<%= opt.value %>" <%= (warga[field.name] && Array.isArray(warga[field.name]) && warga[field.name].includes(opt.value)) ? 'checked' : '' %>>
+                                                <label class="form-check-label fw-medium" for="<%= field.name %>_<%= idx %>"><%= opt.label %></label>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const tglLahirInput = document.getElementById('field_tanggal_lahir');
+        const umurInput = document.getElementById('field_umur');
+
+        // Age Calculation Logic
+        if (tglLahirInput && umurInput) {
+            tglLahirInput.addEventListener('change', function() {
+                const birthDate = new Date(this.value);
+                if (!isNaN(birthDate)) {
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    umurInput.value = age >= 0 ? age : 0;
+                    // Trigger change to re-evaluate conditions
+                    umurInput.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+        }
+
+        // Conditional Logic Engine
+        const containers = document.querySelectorAll('.field-container');
+
+        function getFieldValue(fieldName) {
+            const inputs = form.querySelectorAll(`[name="${fieldName}"], [name="${fieldName}[]"]`);
+            if (inputs.length === 0) return null;
+
+            if (inputs[0].type === 'radio') {
+                const checked = Array.from(inputs).find(i => i.checked);
+                return checked ? checked.value : null;
+            } else if (inputs[0].type === 'checkbox') {
+                return Array.from(inputs).filter(i => i.checked).map(i => i.value);
+            } else {
+                return inputs[0].value;
+            }
+        }
+
+        function evaluateRule(rule) {
+            const val = getFieldValue(rule.field);
+            const target = rule.value;
+
+            switch (rule.operator) {
+                case 'equals': return String(val).toLowerCase() === String(target).toLowerCase();
+                case 'not_equals': return String(val).toLowerCase() !== String(target).toLowerCase();
+                case 'greater_than': return Number(val) > Number(target);
+                case 'less_than': return Number(val) < Number(target);
+                case 'contains': return Array.isArray(val) ? val.includes(target) : String(val).includes(target);
+                default: return false;
+            }
+        }
+
+        function updateVisibility() {
+            containers.forEach(container => {
+                const conditionalStr = container.getAttribute('data-conditional');
+                if (!conditionalStr) return;
+
+                const conditional = JSON.parse(conditionalStr);
+                const rules = conditional.rules || [];
+                const logic = conditional.logic || 'AND';
+
+                let isVisible = logic === 'AND';
+                
+                rules.forEach(rule => {
+                    const result = evaluateRule(rule);
+                    if (logic === 'AND') {
+                        isVisible = isVisible && result;
+                    } else {
+                        isVisible = isVisible || result;
+                    }
+                });
+
+                if (isVisible) {
+                    container.style.display = 'block';
+                    container.querySelectorAll('input, select, textarea').forEach(i => i.disabled = false);
+                } else {
+                    container.style.display = 'none';
+                    container.querySelectorAll('input, select, textarea').forEach(i => i.disabled = true);
+                }
+            });
+        }
+
+        // Listen for all input changes
+        form.addEventListener('change', updateVisibility);
+        form.addEventListener('input', updateVisibility);
+
+        // Client-side debugging for submission
+        form.addEventListener('submit', function(e) {
+            console.log('Form submission triggered');
+            const invalidFields = form.querySelectorAll(':invalid');
+            if (invalidFields.length > 0) {
+                console.warn('Form has invalid fields:', Array.from(invalidFields).map(f => f.name || f.id));
+                // The browser will naturally focus the first invalid field (likely NIK)
+            }
+        });
+        
+        // Initial run
+        updateVisibility();
+    });
+</script>
